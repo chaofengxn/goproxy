@@ -305,11 +305,8 @@ function release_sourceforge() {
 	fi
 
 	(set +x; lftp "sftp://${SOURCEFORGE_USER}:${SOURCEFORGE_PASSWORD}@frs.sourceforge.net/home/frs/project/${SOURCEFORGE_REPO}/" -e "rm -rf r${RELEASE}; mkdir r${RELEASE}; bye")
-	for FILE in *
-	do
-	    echo Uploading ${FILE} to https://sourceforge.net/projects/goproxy/files/r${RELEASE}/
-	    (set +x; lftp "sftp://${SOURCEFORGE_USER}:${SOURCEFORGE_PASSWORD}@frs.sourceforge.net/home/frs/project/${SOURCEFORGE_REPO}/r${RELEASE}" -e "put ${FILE}; bye")
-	done
+	echo Uploading * to https://sourceforge.net/projects/goproxy/files/r${RELEASE}/
+	(set +x; timeout -k60 60 lftp "sftp://${SOURCEFORGE_USER}:${SOURCEFORGE_PASSWORD}@frs.sourceforge.net/home/frs/project/${SOURCEFORGE_REPO}/r${RELEASE}" -e "mirror . .; bye")
 
 	popd
 }
